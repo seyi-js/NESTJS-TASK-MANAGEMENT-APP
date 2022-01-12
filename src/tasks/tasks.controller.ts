@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskStatus } from './dto/update-task-status.dto';
@@ -23,13 +25,19 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  async getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return await this.tasksService.getTasks(filterDto);
+  async getTasks(
+    @Query() filterDto: GetTasksFilterDto,
+    @GetUser() user: User,
+  ): Promise<Task[]> {
+    return await this.tasksService.getTasks(filterDto, user);
   }
 
   @Post()
-  async createTask(@Body() task: CreateTaskDto): Promise<Task> {
-    return await this.tasksService.createTask(task);
+  async createTask(
+    @Body() task: CreateTaskDto,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return await this.tasksService.createTask(task, user);
   }
 
   @Get('/:id')
